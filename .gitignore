@@ -221,3 +221,6 @@ __marimo__/
 
 # generated database (rebuild with database/build_db.py)
 *.db
+
+# generated planner scenarios
+/output/runs/

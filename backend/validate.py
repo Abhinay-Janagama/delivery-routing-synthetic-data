@@ -5,6 +5,7 @@ Input features are read from data/; ground_truth/ is read ONLY at the end to sco
 """
 import csv, json, os, sys
 from collections import Counter, defaultdict
+from datetime import datetime
 
 D = sys.argv[1] if len(sys.argv) > 1 else "output"
 REGION = json.load(open(f"{D}/manifest.json"))["region"]
@@ -67,13 +68,82 @@ check("stop: arrival <= service_start <= departure",
 # 5. arithmetic reconciliation
 od = {o["order_id"]: o for o in T["orders"]}
 check("order.total_demand_kg == delivery.demand_kg", [d["delivery_id"] for d in T["deliveries"] if d["demand_kg"] != od[d["order_id"]]["total_demand_kg"]])
+mx = {(m["scenario_date"], m["origin_site_id"], m["destination_site_id"]): (m["distance_km"], m["travel_minutes"]) for m in T["travel_time_matrix"]}
 by_route = defaultdict(list)
 for s in T["route_stops"]:
     by_route[s["route_id"]].append(s)
 for v in by_route.values():
     v.sort(key=lambda s: int(s["stop_sequence"]))
-check("route.total_load == last stop cum_load", [r["route_id"] for r in T["routes"] if int(r["total_load_kg"]) != int(by_route[r["route_id"]][-1]["cum_load_kg"])])
 check("cum_load non-decreasing", [rid for rid, v in by_route.items() if any(int(a["cum_load_kg"]) > int(b["cum_load_kg"]) for a, b in zip(v, v[1:]))])
+
+# Identify deliberately anomalous routes from operational records, without consulting ground truth.
+stop_counts = Counter(s["delivery_id"] for s in T["route_stops"])
+duplicated_routes = {
+    s["route_id"] for s in T["route_stops"] if stop_counts[s["delivery_id"]] > 1
+}
+stops_by_delivery = defaultdict(list)
+for s in T["route_stops"]:
+    stops_by_delivery[s["delivery_id"]].append(s)
+omitted_routes = {
+    e["ref_id"] for e in T["delivery_events"]
+    if e["to_status"] == "ASSIGNED" and not stops_by_delivery[e["delivery_id"]] and e["ref_id"]
+}
+shift_by_id = {s["shift_id"]: s for s in T["shifts"]}
+shift_exceeded_routes = {
+    r["route_id"] for r in T["routes"]
+    if r["planned_return"] > shift_by_id[r["shift_id"]]["shift_end"]
+}
+
+load_mismatches = []
+cum_load_mismatches = []
+distance_mismatches = []
+duration_mismatches = []
+for r in T["routes"]:
+    rid = r["route_id"]
+    route_stops = by_route[rid]
+    if rid not in omitted_routes:
+        distinct_deliveries = dict.fromkeys(s["delivery_id"] for s in route_stops)
+        expected_load = sum(int(dl[did]["demand_kg"]) for did in distinct_deliveries)
+        if int(r["total_load_kg"]) != expected_load:
+            load_mismatches.append(rid)
+
+        seen_deliveries = set()
+        running_load = 0
+        for s in route_stops:
+            if s["delivery_id"] not in seen_deliveries:
+                running_load += int(dl[s["delivery_id"]]["demand_kg"])
+                seen_deliveries.add(s["delivery_id"])
+            if int(s["cum_load_kg"]) != running_load:
+                cum_load_mismatches.append(s["stop_id"])
+                break
+
+    if rid not in omitted_routes and rid not in duplicated_routes and route_stops:
+        last_site = route_stops[-1]["site_id"]
+        return_leg = mx.get((r["route_date"], last_site, "SITE-000000"))
+        if return_leg is not None:
+            expected_distance = round(
+                sum(float(s["leg_distance_km"]) for s in route_stops)
+                + float(return_leg[0]),
+                2,
+            )
+            if expected_distance != float(r["total_distance_km"]):
+                distance_mismatches.append(rid)
+
+    if rid not in shift_exceeded_routes:
+        elapsed_minutes = int(
+            (
+                datetime.fromisoformat(r["planned_return"])
+                - datetime.fromisoformat(r["depot_departure"])
+            ).total_seconds()
+            // 60
+        )
+        if elapsed_minutes != int(r["planned_duration_min"]):
+            duration_mismatches.append(rid)
+
+check("route.total_load == distinct stop demand", load_mismatches)
+check("stop.cum_load == running distinct demand", cum_load_mismatches)
+check("route.total_distance == stop legs + return leg", distance_mismatches)
+check("route.planned_duration == return - departure", duration_mismatches)
 
 # 6. lifecycle
 ALLOWED = {("", "CREATED"), ("CREATED", "ASSIGNED"), ("CREATED", "UNSERVED"), ("ASSIGNED", "DELIVERED"), ("ASSIGNED", "FAILED")}
@@ -97,7 +167,6 @@ check("restricted sites only served by restricted-capable vehicles",
       [s["stop_id"] for s in T["route_stops"] if site[s["site_id"]]["restricted_access"] == "1" and veh[route[s["route_id"]]["vehicle_id"]]["restricted_access_ok"] != "1"])
 check("planned service start inside time window",
       [s["stop_id"] for s in T["route_stops"] if not (tw[s["delivery_id"]]["window_start"] <= s["planned_service_start"] <= tw[s["delivery_id"]]["window_end"])])
-mx = {(m["scenario_date"], m["origin_site_id"], m["destination_site_id"]): (m["distance_km"], m["travel_minutes"]) for m in T["travel_time_matrix"]}
 check("leg distance/time reproducible from travel-time matrix",
       [s["stop_id"] for s in T["route_stops"] if mx[(route[s["route_id"]]["route_date"], s["from_site_id"], s["site_id"])] != (s["leg_distance_km"], s["leg_travel_min"])])
 
@@ -131,7 +200,7 @@ outs = T["delivery_outcomes"]; dv = [o for o in outs if o["outcome_status"] == "
 kpi = dict(deliveries=len(dl), served_pct=round(100 * sum(d["status"] != "UNSERVED" for d in dl.values()) / len(dl), 1),
            unserved=sum(d["status"] == "UNSERVED" for d in dl.values()), failed=sum(o["outcome_status"] == "FAILED" for o in outs),
            on_time_pct_of_delivered=round(100 * sum(o["late_minutes"] == "0" for o in dv) / max(1, len(dv)), 1),
-           avg_capacity_utilisation_pct=round(100 * sum(int(r["total_load_kg"]) / int(r["capacity_kg_at_plan"]) for r in T["routes"]) / len(T["routes"]), 1),
+           avg_capacity_utilisation_pct=round(100 * sum(int(r["total_load_kg"]) / int(r["capacity_kg_at_plan"]) for r in T["routes"]) / max(1, len(T["routes"])), 1),
            total_planned_km=round(sum(float(r["total_distance_km"]) for r in T["routes"]), 1),
            reason_codes=dict(Counter(d["reason_code"] for d in dl.values() if d["reason_code"])))
 

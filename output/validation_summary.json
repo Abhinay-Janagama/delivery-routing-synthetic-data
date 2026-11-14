@@ -1,0 +1,413 @@
+{
+  "checks_total": 58,
+  "checks_failed": 0,
+  "checks": [
+    {
+      "check": "PK unique: customer_sites",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "PK unique: orders",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "PK unique: deliveries",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "PK unique: time_windows",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "PK unique: vehicles",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "PK unique: vehicle_capacity",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "PK unique: drivers",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "PK unique: shifts",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "PK unique: routes",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "PK unique: route_stops",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "PK unique: delivery_outcomes",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "PK unique: delivery_events",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "PK unique: travel_time_matrix",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "FK orders.site_id -> customer_sites.site_id",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "FK deliveries.order_id -> orders.order_id",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "FK deliveries.site_id -> customer_sites.site_id",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "FK time_windows.delivery_id -> deliveries.delivery_id",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "FK vehicle_capacity.vehicle_id -> vehicles.vehicle_id",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "FK shifts.driver_id -> drivers.driver_id",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "FK shifts.vehicle_id -> vehicles.vehicle_id",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "FK routes.shift_id -> shifts.shift_id",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "FK routes.vehicle_id -> vehicles.vehicle_id",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "FK routes.driver_id -> drivers.driver_id",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "FK route_stops.route_id -> routes.route_id",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "FK route_stops.delivery_id -> deliveries.delivery_id",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "FK route_stops.site_id -> customer_sites.site_id",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "FK route_stops.from_site_id -> customer_sites.site_id",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "FK delivery_outcomes.stop_id -> route_stops.stop_id",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "FK delivery_outcomes.delivery_id -> deliveries.delivery_id",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "FK delivery_events.delivery_id -> deliveries.delivery_id",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "FK travel_time_matrix.origin_site_id -> customer_sites.site_id",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "FK travel_time_matrix.destination_site_id -> customer_sites.site_id",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "enum deliveries.status",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "enum deliveries.priority",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "enum delivery_outcomes.outcome_status",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "enum vehicles.vehicle_type",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "enum shifts.shift_type",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "enum customer_sites.site_type",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "enum routes.traffic_scenario",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "failed outcomes have reason code, delivered have none",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "unserved deliveries have UNSERVED_* reason",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "window_start < window_end",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "shift_start < shift_end",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "order_date <= delivery_date",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "stop: arrival <= service_start <= departure",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "order.total_demand_kg == delivery.demand_kg",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "cum_load non-decreasing",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "route.total_load == distinct stop demand",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "stop.cum_load == running distinct demand",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "route.total_distance == stop legs + return leg",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "route.planned_duration == return - departure",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "lifecycle: allowed transitions",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "lifecycle: chain + timestamps ordered",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "delivery.status == last event",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "every delivery assigned or explicitly unserved",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "restricted sites only served by restricted-capable vehicles",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "planned service start inside time window",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    },
+    {
+      "check": "leg distance/time reproducible from travel-time matrix",
+      "violations": 0,
+      "sample": [],
+      "passed": true
+    }
+  ],
+  "anomaly_detection": {
+    "ARRIVAL_BEFORE_PREV_DEPARTURE": {
+      "expected": 6,
+      "detected": 6,
+      "true_pos": 6,
+      "false_pos": 0,
+      "missed": 0
+    },
+    "COORDINATE_OUTSIDE_REGION": {
+      "expected": 6,
+      "detected": 6,
+      "true_pos": 6,
+      "false_pos": 0,
+      "missed": 0
+    },
+    "DRIVER_SHIFT_EXCEEDED": {
+      "expected": 6,
+      "detected": 6,
+      "true_pos": 6,
+      "false_pos": 0,
+      "missed": 0
+    },
+    "ROUTE_EXCEEDS_CAPACITY": {
+      "expected": 6,
+      "detected": 6,
+      "true_pos": 6,
+      "false_pos": 0,
+      "missed": 0
+    },
+    "STOP_DUPLICATED": {
+      "expected": 6,
+      "detected": 6,
+      "true_pos": 6,
+      "false_pos": 0,
+      "missed": 0
+    },
+    "STOP_OMITTED": {
+      "expected": 6,
+      "detected": 6,
+      "true_pos": 6,
+      "false_pos": 0,
+      "missed": 0
+    }
+  },
+  "kpis": {
+    "deliveries": 2000,
+    "served_pct": 96.5,
+    "unserved": 69,
+    "failed": 101,
+    "on_time_pct_of_delivered": 98.0,
+    "avg_capacity_utilisation_pct": 83.8,
+    "total_planned_km": 24131.4,
+    "reason_codes": {
+      "CUSTOMER_ABSENT": 60,
+      "WINDOW_MISSED": 33,
+      "UNSERVED_NO_SHIFT_TIME": 69,
+      "ACCESS_BLOCKED": 8
+    }
+  }
+}

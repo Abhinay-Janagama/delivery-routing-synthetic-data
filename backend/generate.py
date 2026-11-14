@@ -253,13 +253,18 @@ def generate(a):
                   route_stops=stops, delivery_outcomes=outcomes, delivery_events=events)
     os.makedirs(f"{a.out}/data", exist_ok=True); os.makedirs(f"{a.out}/ground_truth", exist_ok=True)
     manifest = dict(seed=a.seed, params=vars(a), region=REGION, files={})
-    def write(path, rows):
+    def write(path, rows, fieldnames=None):
         with open(f"{a.out}/{path}", "w", newline="") as f:
-            w = csv.DictWriter(f, fieldnames=list(rows[0]), lineterminator="\n"); w.writeheader(); w.writerows(rows)
+            columns = fieldnames if fieldnames is not None else list(rows[0])
+            w = csv.DictWriter(f, fieldnames=columns, lineterminator="\n"); w.writeheader(); w.writerows(rows)
         manifest["files"][path] = dict(rows=len(rows), sha256=hashlib.sha256(open(f"{a.out}/{path}", "rb").read()).hexdigest())
     for n, rows in tables.items():
         write(f"data/{n}.csv", rows)
-    write("ground_truth/ground_truth.csv", gt)
+    write(
+        "ground_truth/ground_truth.csv",
+        gt,
+        ["gt_id", "issue_type", "entity_type", "entity_id", "route_id", "details"],
+    )
     json.dump(manifest, open(f"{a.out}/manifest.json", "w"), indent=2)
     return manifest
 

@@ -1,0 +1,77 @@
+{
+  "seed": 20261022,
+  "params": {
+    "sites": 500,
+    "deliveries": 2000,
+    "vehicles": 100,
+    "days": 30,
+    "vehicles_per_day": 10,
+    "anomalies_per_type": 6,
+    "seed": 20261022,
+    "out": "output"
+  },
+  "region": {
+    "lat_min": 17.2,
+    "lat_max": 17.6,
+    "lon_min": 78.2,
+    "lon_max": 78.7
+  },
+  "files": {
+    "data/customer_sites.csv": {
+      "rows": 501,
+      "sha256": "7bf58cef349b5151eca92649f0514ccfe5771c76d5890574e15ce0e3c8c25b9a"
+    },
+    "data/orders.csv": {
+      "rows": 2000,
+      "sha256": "3d3d3e66c90a929934025c0af5e818589ddd7b0c86c4113ccc629cffb49a8b73"
+    },
+    "data/deliveries.csv": {
+      "rows": 2000,
+      "sha256": "b61a9adee5e83e359e7298b3afc6c44e83b72a1d672fef6ed347fbafa3f2e62c"
+    },
+    "data/time_windows.csv": {
+      "rows": 2000,
+      "sha256": "3097b4ec079a50c57979c30b8e839b46ee8bddc2c8f537a05de99ef19f8b1282"
+    },
+    "data/vehicles.csv": {
+      "rows": 100,
+      "sha256": "10286c7e4521e384643094ffb38facc4ababfdb82191f696e2bd1bae7a8300f3"
+    },
+    "data/vehicle_capacity.csv": {
+      "rows": 110,
+      "sha256": "8ca01bcb354db7a73e31cb03a4536b369ab334bf26fc3539879f007ce6730002"
+    },
+    "data/drivers.csv": {
+      "rows": 100,
+      "sha256": "3a9180bd5c806422b152b039f7e8cba637a9c301370e10477d0e50b3ca92281a"
+    },
+    "data/shifts.csv": {
+      "rows": 300,
+      "sha256": "22ef433bd6330532c429dd3f3af20c0907890b3b0f3b261aff01d149a421dfa0"
+    },
+    "data/travel_time_matrix.csv": {
+      "rows": 123693,
+      "sha256": "7ea4ee48ecc9b1000ee348cab45c575c8398986aa64b1837c5fd21c737c553ee"
+    },
+    "data/routes.csv": {
+      "rows": 282,
+      "sha256": "7783d783ca2ae4af175d607097cf68e73d482d761fe015b4c187e6ace0563067"
+    },
+    "data/route_stops.csv": {
+      "rows": 1931,
+      "sha256": "f370f7ee510cba7be62a67a238d49d132e85c5d8aab38f542112737c569270d7"
+    },
+    "data/delivery_outcomes.csv": {
+      "rows": 1925,
+      "sha256": "407082408a16c8b5d828aa6fddc2b4c9544c943a630659e75bd9c0afd0b84289"
+    },
+    "data/delivery_events.csv": {
+      "rows": 5931,
+      "sha256": "6269f1aa64d1eb0d512a541e1a4d5c232accfda92728c406fa69d72a4a595e3b"
+    },
+    "ground_truth/ground_truth.csv": {
+      "rows": 36,
+      "sha256": "4c174e2c16962b54bdb5251c11ba8e01dcc65a73340c3fe1e4e79be5c86b5821"
+    }
+  }
+}
